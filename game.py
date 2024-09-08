@@ -17,7 +17,9 @@ class TicTacToeBoard(tk.Tk):
         menu_bar = tk.Menu(master=self)
         self.config(menu=menu_bar)
         file_menu = tk.Menu(master=menu_bar)
-        file_menu.add_command(label="Play Again", command=self.reset_board)
+        file_menu.add_command(label="Play against random policy", command=self.reset_board_with_random_policy)
+        file_menu.add_command(label="Play against dqn policy", command=self.reset_board_with_dqn_policy)
+        file_menu.add_command(label="Play against minimax policy", command=self.reset_board_with_minimax_policy)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
@@ -84,8 +86,7 @@ class TicTacToeBoard(tk.Tk):
             if coordinates in self._game.winner_combo:
                 button.config(highlightbackground="red")
 
-    def reset_board(self):
-        """Reset the game's board to play again."""
+    def _reset_board(self):
         self._game.reset()
         self._update_grid()
         self._update_display(msg="Ready?")
@@ -94,9 +95,24 @@ class TicTacToeBoard(tk.Tk):
             button.config(text="")
             button.config(fg="black")
 
+    def reset_board_with_random_policy(self):
+        """Reset the game's board to play again."""
+        self._game = XOEnv(machine_policy='random')
+        self._reset_board()
+
+    def reset_board_with_dqn_policy(self):
+        """Reset the game's board to play again."""
+        self._game = XOEnv(machine_policy='dqn')
+        self._reset_board()
+
+    def reset_board_with_minimax_policy(self):
+        """Reset the game's board to play again."""
+        self._game = XOEnv(machine_policy='minimax')
+        self._reset_board()
+
 def main():
     """Create the game's board and run its main loop."""
-    game = XOEnv(machine_policy='minimax')
+    game = XOEnv(machine_policy='dqn')
     board = TicTacToeBoard(game)
     board.mainloop()
 
